@@ -137,3 +137,30 @@ tr:nth-child(even) {
     font-size: 14px;
     color: #f9c784;
 }
+
+#jsonInput {
+    width: 98%;
+    height: 60px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #faf8f8;
+    background-color: #555;
+}
+
+#jsonInput::-webkit-scrollbar {
+    width: 10px;
+}
+
+#jsonInput::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#jsonInput::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+#jsonInput::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
