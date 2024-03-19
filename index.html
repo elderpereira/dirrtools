@@ -19,6 +19,7 @@
         <label><input type="checkbox" id="contadorCaracteres" onchange="toggleFerramenta('contadorCaracteres')"> Contador de Caracteres</label>
         <label><input type="checkbox" id="conversorData" onchange="toggleFerramenta('conversorData')"> Conversor de Data</label>
         <label><input type="checkbox" id="construtorTabela" onchange="toggleFerramenta('construtorTabela')"> JSON para Tabela</label>
+        <label><input type="checkbox" id="construtorLink" onchange="toggleFerramenta('construtorLink')"> Link Whats</label>
     </div>
     <div id="ferramentas">
     <!-- contador de caracteres -->
@@ -48,6 +49,15 @@
         <button id="voltar" onclick="voltar()" style="display: none;">Voltar</button>
     </div>
     
+    <!-- Construtor de Link -->
+    <div id="construtorLinkFerramenta" class="ferramenta" style="display: none;">
+        <h2>Construtor de Link</h2>
+        <div id="entradaNumero">
+            <input type="text" id="numeroInput" placeholder="Insira o número aqui" onchange="atualizarLinkPreview()"/>
+            <button onclick="construirLink()">Abrir Link</button>
+            <div id="linkPreview"></div>
+        </div>
+    </div>
 
 
     <!-- as ferramentas ficam acima disso aq -->
@@ -168,6 +178,17 @@
 
             $('#jsonViewer').jsonViewer(dados);
         }
+
+    function atualizarLinkPreview() {
+        var numero = document.getElementById('numeroInput').value;
+        var linkPreview = document.getElementById('linkPreview');
+        linkPreview.textContent = 'https://wa.me/' + numero;
+    }
+
+    function construirLink() {
+        var numero = document.getElementById('numeroInput').value;
+        window.open('https://wa.me/' + numero, '_blank');
+    }
     </script>
 </body>
 </html>
