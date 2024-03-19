@@ -180,17 +180,25 @@
             $('#jsonViewer').jsonViewer(dados);
         }
 
-    function atualizarLinkPreview() {
+        function atualizarLinkPreview() {
         var numero = document.getElementById('numeroInput').value;
-        var mensagem = encodeURIComponent(document.getElementById('mensagemInput').value);
+        var mensagem = document.getElementById('mensagemInput').value;
         var linkPreview = document.getElementById('linkPreview');
-        linkPreview.textContent = 'https://wa.me/' + numero + '?text=' + mensagem;
+        var link = 'https://wa.me/' + numero;
+        if (mensagem) {
+            link += '?text=' + encodeURIComponent(mensagem);
+        }
+        linkPreview.textContent = link;
     }
 
     function construirLink() {
         var numero = document.getElementById('numeroInput').value;
-        var mensagem = encodeURIComponent(document.getElementById('mensagemInput').value);
-        window.open('https://wa.me/' + numero + '?text=' + mensagem, '_blank');
+        var mensagem = document.getElementById('mensagemInput').value;
+        var link = 'https://wa.me/' + numero;
+        if (mensagem) {
+            link += '?text=' + encodeURIComponent(mensagem);
+        }
+        window.open(link, '_blank');
     }
     </script>
 </body>
