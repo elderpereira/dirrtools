@@ -20,6 +20,18 @@ h1 {
     border-radius: 5px;
 }
 
+.ferramenta textarea {
+    width: 98%;
+    padding: 10px;
+    border: 1px solid #555;
+    background-color: #444;
+    color: #f0f0f0;
+    border-radius: 5px;
+    resize: vertical;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
 #data {
     width: 240px;
 }
@@ -136,4 +148,39 @@ tr:nth-child(even) {
     cursor: pointer;
     font-size: 14px;
     color: #f9c784;
+}
+
+#entradaNumero {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+#ddiInput, #numeroInput {
+    margin-right: 10px;
+}
+
+#ddiInput {
+    width: 20px;
+}
+
+#numeroInput {
+    width: 100px;
+}
+
+#mensagemInput {
+    width: 100%;
+    min-height: 50px;
+    resize: vertical;
+}
+
+#colunasDropdown {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #555;
+    background-color: #444;
+    color: #f0f0f0;
+    border-radius: 5px;
+    margin-bottom: 20px;
 }

@@ -10,6 +10,31 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://rawgit.com/abodelot/jquery.json-viewer/master/json-viewer/jquery.json-viewer.js"></script>
     <link href="https://rawgit.com/abodelot/jquery.json-viewer/master/json-viewer/jquery.json-viewer.css" type="text/css" rel="stylesheet">
+    <script src="analisadorCsv.js"></script>
+    <script type="importmap">
+        {
+          "imports": {
+            "@google/generative-ai": "https://esm.run/@google/generative-ai"
+          }
+        }
+      </script>
+      <script type="module">
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+  
+        const apiGeminiInput = document.getElementById('apiGemini');
+  
+        apiGeminiInput.addEventListener('input', () => {
+          const API_KEY = apiGeminiInput.value;
+          console.log(API_KEY);
+        });
+  
+        const genAI = new GoogleGenerativeAI(API_KEY);
+
+  
+        const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+
+      </script>
+
 </head>
 <body>
     <h1><i class="fas fa-wrench"></i> Ferramentas do Dirr</h1>
@@ -20,6 +45,7 @@
         <label><input type="checkbox" id="conversorData" onchange="toggleFerramenta('conversorData')"> Conversor de Data</label>
         <label><input type="checkbox" id="construtorTabela" onchange="toggleFerramenta('construtorTabela')"> JSON para Tabela</label>
         <label><input type="checkbox" id="construtorLink" onchange="toggleFerramenta('construtorLink')"> Link Whats</label>
+        <label><input type="checkbox" id="analisadorCsv" onchange="toggleFerramenta('analisadorCsv')"> IA CSV</label>
     </div>
     <div id="ferramentas">
     <!-- contador de caracteres -->
@@ -51,14 +77,46 @@
     
     <!-- Construtor de Link -->
     <div id="construtorLinkFerramenta" class="ferramenta" style="display: none;">
-        <h2>Construtor de Link</h2>
+        <h2>Construtor de Link WhatsApp</h2>
         <div id="entradaNumero">
+            <input type="text" id="ddiInput" placeholder="Insira o DDI aqui" value="55" onchange="atualizarLinkPreview()"/>
             <input type="text" id="numeroInput" placeholder="Insira o número aqui" onchange="atualizarLinkPreview()"/>
-            <input type="text" id="mensagemInput" placeholder="Insira a mensagem aqui" onchange="atualizarLinkPreview()"/>
+            <textarea id="mensagemInput" placeholder="Insira a mensagem aqui" onchange="atualizarLinkPreview()"></textarea>
             <button onclick="construirLink()">Abrir Link</button>
             <div id="linkPreview"></div>
         </div>
     </div>
+
+<!-- Analisador de CSV -->
+<div id="analisadorCsvFerramenta" class="ferramenta" style="display: none;">
+    <h2>Analisador de CSV</h2>
+    <div id="entradaCsv">
+        <p>API GEmini:</p>
+        <input type="text" id="apiGemini" placeholder="Insira a API do Gemini aqui">
+        <button id="novaAtividadeBtn" onclick="iniciarNovaAtividade()" style="display: none;">Iniciar nova atividade</button>
+        <textarea id="csvInput" placeholder="Insira o CSV aqui" onchange="atualizarCsvViewer()"></textarea>
+        <p>Selecione as colunas para visualizar a tabela abaixo, para selecionar mais de uma coluna segure CTRL e clique sobre as opções de colunas desejadas.</p>
+        <select id="colunasDropdown" multiple onchange="atualizarTabela()"></select>
+        <button onclick="analisarCsv()">Analisar CSV</button>
+        <!-- roteiro -->
+        <button onclick="abrirModalRoteiro()">Adicionar ao roteiro</button>
+        <button id="iniciarRoteiro">Iniciar Roteiro</button>
+        <button id="copiarCsv">Copiar CSV</button>
+
+        <div id="modalRoteiro" style="display: none;">
+            <select id="tipoAdicao" onchange="atualizarModalRoteiro()">
+                <option value="texto">Texto</option>
+                <option value="coluna">Coluna</option>
+            </select>
+            <input type="text" id="textoAdicao" style="display: none;">
+            <select id="colunaAdicao" style="display: none;"></select>
+            <button onclick="adicionarAoRoteiro()">Adicionar</button>
+        </div>
+        
+        <p id="previewRoteiro"></p>
+        <table id="csvTabela"></table>
+    </div>
+</div>
 
 
     <!-- as ferramentas ficam acima disso aq -->
@@ -181,10 +239,11 @@
         }
 
         function atualizarLinkPreview() {
-        var numero = document.getElementById('numeroInput').value;
+        var ddi = document.getElementById('ddiInput').value;
+        var numero = document.getElementById('numeroInput').value.replace(/\s|-/g, '');
         var mensagem = document.getElementById('mensagemInput').value;
         var linkPreview = document.getElementById('linkPreview');
-        var link = 'https://wa.me/' + numero;
+        var link = 'https://wa.me/' + ddi + numero;
         if (mensagem) {
             link += '?text=' + encodeURIComponent(mensagem);
         }
@@ -192,14 +251,166 @@
     }
 
     function construirLink() {
-        var numero = document.getElementById('numeroInput').value;
+        var ddi = document.getElementById('ddiInput').value;
+        var numero = document.getElementById('numeroInput').value.replace(/\s|-/g, '');
         var mensagem = document.getElementById('mensagemInput').value;
-        var link = 'https://wa.me/' + numero;
+        var link = 'https://wa.me/' + ddi + numero;
         if (mensagem) {
             link += '?text=' + encodeURIComponent(mensagem);
         }
         window.open(link, '_blank');
     }
     </script>
+    <script>
+        let dadosCsv = [];
+        let titulos = [];
+        let roteiro = [];
+
+        document.getElementById('copiarCsv').addEventListener('click', () => {
+            // Converte os dados atualizados de volta para o formato CSV
+            let csv = titulos.join(",") + "\n";
+            for (let linha of dadosCsv) {
+            csv += linha.join(",") + "\n";
+            }
+
+            // Copia o CSV para a área de transferência
+            navigator.clipboard.writeText(csv).then(() => {
+            console.log('CSV copiado para a área de transferência');
+            }).catch(err => {
+            console.error('Erro ao copiar CSV: ', err);
+            });
+        });
+        
+        function atualizarCsvViewer() {
+            let csv = document.getElementById('csvInput').value;
+            let linhas = csv.split('\n');
+            titulos = linhas[0].split(';');
+            dadosCsv = linhas.slice(1).map(linha => linha.split(';'));
+        
+            let dropdown = document.getElementById('colunasDropdown');
+            dropdown.innerHTML = titulos.map((titulo, index) => `<option value="${index}">${titulo}</option>`).join('');
+        
+            atualizarTabela();
+        
+            document.getElementById('csvInput').disabled = true;
+            document.getElementById('novaAtividadeBtn').style.display = 'block';
+        }
+        
+        function iniciarNovaAtividade() {
+            document.getElementById('csvInput').value = '';
+            document.getElementById('csvInput').disabled = false;
+            document.getElementById('novaAtividadeBtn').style.display = 'none';
+            document.getElementById('csvTabela').innerHTML = '';
+            document.getElementById('colunasDropdown').innerHTML = '';
+        }
+        
+        function atualizarTabela() {
+            let colunasSelecionadas = Array.from(document.getElementById('colunasDropdown').selectedOptions).map(option => option.value);
+            let tabela = document.getElementById('csvTabela');
+            let cabecalho = `<tr>${colunasSelecionadas.map(coluna => `<th>${titulos[coluna]}</th>`).join('')}</tr>`;
+            let corpo = dadosCsv.map(linha => `<tr>${colunasSelecionadas.map(coluna => `<td>${linha[coluna]}</td>`).join('')}</tr>`).join('');
+            tabela.innerHTML = cabecalho + corpo;
+        }
+
+        function analisarCsv() {
+            atualizarCsvViewer();
+        }
+
+        function abrirModalRoteiro() {
+            document.getElementById('modalRoteiro').style.display = 'block';
+            atualizarModalRoteiro();
+        }
+
+        function atualizarModalRoteiro() {
+            let tipo = document.getElementById('tipoAdicao').value;
+            if (tipo === 'texto') {
+                document.getElementById('textoAdicao').style.display = 'block';
+                document.getElementById('colunaAdicao').style.display = 'none';
+            } else {
+                document.getElementById('textoAdicao').style.display = 'none';
+                document.getElementById('colunaAdicao').style.display = 'block';
+                document.getElementById('colunaAdicao').innerHTML = titulos.map((titulo, index) => `<option value="${index}">${titulo}</option>`).join('');
+            }
+        }
+
+        function adicionarAoRoteiro() {
+            let tipo = document.getElementById('tipoAdicao').value;
+            let adicao;
+            if (tipo === 'texto') {
+                adicao = document.getElementById('textoAdicao').value;
+                roteiro.push({ tipo: 'texto', valor: adicao });
+            } else {
+                let coluna = document.getElementById('colunaAdicao').value;
+                adicao = titulos[coluna];
+                roteiro.push({ tipo: 'coluna', valor: adicao });
+            }
+            if (!titulos.includes('prompt')) {
+                titulos.push('prompt');
+                for (let linha of dadosCsv) {
+                    linha.push('');
+                }
+            }
+            for (let i = 0; i < dadosCsv.length; i++) {
+                let prompt = '';
+                for (let passo of roteiro) {
+                    if (passo.tipo === 'texto') {
+                        prompt += ' ' + passo.valor;
+                    } else {
+                        prompt += ' ' + dadosCsv[i][titulos.indexOf(passo.valor)];
+                    }
+                }
+                dadosCsv[i][titulos.length - 1] = prompt;
+            }
+            document.getElementById('modalRoteiro').style.display = 'none';
+            atualizarTabela();
+            document.getElementById('previewRoteiro').innerText = 'Preview do roteiro: ' + dadosCsv[0][titulos.length - 1];
+            atualizarColunasDropdown();
+        }
+
+        function atualizarColunasDropdown() {
+            document.getElementById('colunasDropdown').innerHTML = titulos.map((titulo, index) => `<option value="${index}">${titulo}</option>`).join('');
+        }
+        </script>
+ 
+ <script type="module">
+    import { GoogleGenerativeAI } from "@google/generative-ai";
+  
+    document.addEventListener('DOMContentLoaded', (event) => {
+      document.getElementById('iniciarRoteiro').addEventListener('click', async () => {
+        console.log('Botão Iniciar Roteiro clicado');
+  
+        const API_KEY = document.getElementById('apiGemini').value;
+        const genAI = new GoogleGenerativeAI(API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+  
+        // Adicione a nova coluna "Resposta IA" aos títulos
+        titulos.push("Resposta IA");
+  
+        // Para cada linha de dados, gere uma resposta da IA e adicione à linha
+        for (let linha of dadosCsv) {
+          let prompt = '';
+          for (let passo of roteiro) {
+            if (passo.tipo === 'texto') {
+              prompt += ' ' + passo.valor;
+            } else {
+              prompt += ' ' + linha[titulos.indexOf(passo.valor)];
+            }
+          }
+          console.log(`Perguntando: ${prompt}`);
+          const result = await model.generateContent(prompt);
+          const response = await result.response;
+          const text = response.text();
+          console.log(`Resposta recebida: ${text}`);
+          linha.push(text);
+        }
+  
+        // Atualize o dropdown de colunas e a tabela
+        atualizarColunasDropdown();
+        atualizarTabela();
+      });
+    });
+  </script>
+
+
 </body>
 </html>
