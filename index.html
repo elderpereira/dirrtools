@@ -46,6 +46,7 @@
         <label><input type="checkbox" id="construtorTabela" onchange="toggleFerramenta('construtorTabela')"> JSON para Tabela</label>
         <label><input type="checkbox" id="construtorLink" onchange="toggleFerramenta('construtorLink')"> Link Whats</label>
         <label><input type="checkbox" id="analisadorCsv" onchange="toggleFerramenta('analisadorCsv')"> IA CSV</label>
+        <label><input type="checkbox" id="solicitacaoGemini" onchange="toggleFerramenta('solicitacaoGemini')"> IA APOIO</label>
     </div>
     <div id="ferramentas">
     <!-- contador de caracteres -->
@@ -118,11 +119,47 @@
     </div>
 </div>
 
+<!-- Ferramenta de Solicitação Gemini -->
+<div id="solicitacaoGeminiFerramenta" class="ferramenta" style="display: none;">
+    <h2>Solicitação Gemini</h2>
+    <div id="entradaGemini">
+        <p>Chave da API:</p>
+        <input type="text" id="apiGeminiInput" placeholder="Insira a chave da API aqui">
+        <p>Descrição do Produto/Serviço:</p>
+        <textarea id="descricaoInput" placeholder="Descreva o produto/serviço aqui"></textarea>
+        <p>Selecione a opção para a publicação:</p>
+        <select id="opcoesDropdown">
+            <option value="postagemRedeSocial">Postagem para rede social</option>
+            <option value="descricaoServico">Descrição de serviço prestado</option>
+            <option value="dicaPromocao">Gerador de dicas para divulgação</option>
+            <!-- Adicione mais opções conforme necessário -->
+        </select>
+        <button id="enviarSolicitacaoGemini">Enviar Solicitação</button>
+    </div>
+    <div id="respostaGemini">
+        <p>Resposta:</p>
+        <label id="respostaTexto"></label>
+    </div>
+</div>
+
 
     <!-- as ferramentas ficam acima disso aq -->
     </div>
 
     <script>
+        // Quando a página é carregada, preencha o campo de entrada com o valor salvo
+        window.onload = function() {
+            var apiGemini = localStorage.getItem('apiGemini');
+            if (apiGemini) {
+                document.getElementById('apiGeminiInput').value = apiGemini;
+            }
+        }
+
+        // Quando o valor do campo de entrada muda, salve o novo valor
+        document.getElementById('apiGeminiInput').addEventListener('change', function() {
+            localStorage.setItem('apiGemini', this.value);
+        });
+
         // Função para mostrar/ocultar ferramentas
         function toggleFerramenta(id) {
             var checkbox = document.getElementById(id);
@@ -408,6 +445,42 @@
         atualizarColunasDropdown();
         atualizarTabela();
       });
+
+      // Adicione um novo ouvinte de evento para o botão da nova ferramenta
+        document.getElementById('enviarSolicitacaoGemini').addEventListener('click', async () => {
+        console.log('Botão Enviar Solicitação Gemini clicado');
+
+        const API_KEY = document.getElementById('apiGeminiInput').value;
+        const genAI = new GoogleGenerativeAI(API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+
+        // Obtenha a descrição do campo de entrada
+        const descricao = document.getElementById('descricaoInput').value;
+
+        // Obtenha a opção selecionada do dropdown
+        const opcao = document.getElementById('opcoesDropdown').value;
+
+        // Escolha o prompt com base na opção selecionada
+        let prompt;
+        if (opcao === 'postagemRedeSocial') {
+            prompt = `Crie um texto para postagem para uma rede social sobre o meu produto/serviço que tem a descrição a seguir: ${descricao}`;
+        } else if (opcao === 'descricaoServico') {
+            prompt = `Crie um texto descrevendo as atividades realizadas no serviço prestado, descreve de forma breve e sucinta com base nas informações a seguir: ${descricao}`;
+        } else if (opcao === 'dicaPromocao') {
+            prompt = `Por favor, poderia me fornecer uma estratégia detalhada para promover meu produto/serviço? Gostaria de explorar tanto opções gratuitas quanto pagas, acompanhadas de um passo a passo para implementação eficaz. ${descricao}`;
+        }
+
+        console.log(`Perguntando: ${prompt}`);
+
+        // Gere uma resposta da IA
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        console.log(`Resposta recebida: ${text}`);
+
+        // Atualize o texto do elemento respostaTexto com a resposta
+        document.getElementById('respostaTexto').innerText = text;
+    });
     });
   </script>
 
