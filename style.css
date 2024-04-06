@@ -184,3 +184,48 @@ tr:nth-child(even) {
     border-radius: 5px;
     margin-bottom: 20px;
 }
+
+.pomodoro-config {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+.pomodoro-config p {
+    margin: 0;
+}
+
+.pomodoro-config input {
+    width: 50px;
+    text-align: center;
+}
+
+#iniciarPomodoro {
+    display: block;
+    margin: 20px auto 0;
+}
+
+#pomodoroGrafico {
+    transform: rotate(-90deg);
+    width: 200px;
+    height: 200px;
+  }
+  
+  #pomodoroCirculo {
+    fill: none;
+    stroke: #4caf50;
+    stroke-width: 2;
+    stroke-dasharray: 113;
+    stroke-dashoffset: 113;
+  }
+
+#pomodoroCirculo2 { 
+    fill: none;
+    stroke: rgb(52, 54, 61); /* mudar para uma cor que contraste com o fundo */
+}
+
+#iniciarPomodoro {
+    float: left;
+    order: 1;
+}

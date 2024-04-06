@@ -47,6 +47,7 @@
         <label><input type="checkbox" id="construtorLink" onchange="toggleFerramenta('construtorLink')"> Link Whats</label>
         <label><input type="checkbox" id="analisadorCsv" onchange="toggleFerramenta('analisadorCsv')"> IA CSV</label>
         <label><input type="checkbox" id="solicitacaoGemini" onchange="toggleFerramenta('solicitacaoGemini')"> IA APOIO</label>
+        <label><input type="checkbox" id="pomodoro" onchange="toggleFerramenta('pomodoro')"> Pomodoro</label>
     </div>
     <div id="ferramentas">
     <!-- contador de caracteres -->
@@ -142,9 +143,88 @@
     </div>
 </div>
 
+<div id="pomodoroFerramenta"  class="ferramenta" style="display: none;">
+    <h2>Ferramenta Pomodoro</h2>
+    <div class="pomodoro-config">
+        <input type="number" id="tempoPomodoro" value="25">
+        <p>Tempo de Pomodoro (minutos):</p>
+    </div>
+    <div class="pomodoro-config">
+        <input type="number" id="tempoIntervaloCurto" value="5">
+        <p>Tempo de Intervalo Curto (minutos):</p>
+    </div>
+    <div class="pomodoro-config">
+        <input type="number" id="tempoIntervaloLongo" value="15">
+        <p>Tempo de Intervalo Longo (minutos):</p>
+    </div>
+    <div class="pomodoro-config">
+        <input type="number" id="recorrenciaIntervaloLongo" value="4">
+        <p>Recorrência do Intervalo Longo (ciclos de Pomodoro):</p>
+    </div>
+    <button id="iniciarPomodoro">Iniciar Pomodoro</button>
+    <div style="clear: both;"></div>
+    <div style="position: relative; width: 200px; height: 200px;">
+        <svg id="pomodoroGrafico" viewBox="-2 -2 40 40" style="width: 100%; height: 100%;">
+            <circle id="pomodoroCirculo" r="18" cx="18" cy="18" />
+            <circle id="pomodoroCirculo2" r="18" cx="18" cy="18" />
+        </svg>
+        <p id="statusPomodoro" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); margin: 0;"></p>
+    </div>
+ 
+</div>
 
     <!-- as ferramentas ficam acima disso aq -->
     </div>
+
+    <script>
+        // pomodoro
+        let cicloAtual = 0;
+        let estadoAtual = 'pomodoro';
+        let tempoRestante;
+        let intervalId;
+        
+        function reiniciarVariaveis(tempoPomodoro) {
+            estadoAtual = 'pomodoro';
+            cicloAtual = 0;
+            tempoRestante = tempoPomodoro * 60;
+            const pomodoroCirculo = document.getElementById('pomodoroCirculo');
+            pomodoroCirculo.style.strokeDashoffset = 113;
+        }
+        
+        document.getElementById('iniciarPomodoro').addEventListener('click', () => {
+            const tempoPomodoro = document.getElementById('tempoPomodoro').value;
+            const tempoIntervaloCurto = document.getElementById('tempoIntervaloCurto').value;
+            const tempoIntervaloLongo = document.getElementById('tempoIntervaloLongo').value;
+            const recorrenciaIntervaloLongo = document.getElementById('recorrenciaIntervaloLongo').value;
+        
+            reiniciarVariaveis(tempoPomodoro);
+            iniciarPomodoro(tempoPomodoro, tempoIntervaloCurto, tempoIntervaloLongo, recorrenciaIntervaloLongo);
+        });
+        
+        function iniciarPomodoro(tempoPomodoro, tempoIntervaloCurto, tempoIntervaloLongo, recorrenciaIntervaloLongo) {
+            const tempoTotal = tempoRestante;
+            const pomodoroCirculo = document.getElementById('pomodoroCirculo');
+        
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+            intervalId = setInterval(() => {
+                if (tempoRestante > 0) {
+                    tempoRestante--;
+                    const minutos = Math.floor(tempoRestante / 60);
+                    const segundos = tempoRestante % 60;
+                    document.getElementById('statusPomodoro').textContent = `${minutos}m ${segundos}s`;
+        
+                    const percentualConcluido = ((tempoTotal - tempoRestante) / tempoTotal) * 100;
+                    pomodoroCirculo.style.strokeDashoffset = ((100 - percentualConcluido) / 100) * 113;
+                } else {
+                    clearInterval(intervalId);
+                    estadoAtual = estadoAtual === 'pomodoro' ? 'intervalo' : 'pomodoro';
+                    iniciarPomodoro(tempoPomodoro, tempoIntervaloCurto, tempoIntervaloLongo, recorrenciaIntervaloLongo);
+                }
+            }, 1000);
+        }
+    </script>
 
     <script>
         // Quando a página é carregada, preencha o campo de entrada com o valor salvo
