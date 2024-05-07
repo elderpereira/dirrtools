@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <title>CCID Analyze</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto&display=swap">
+</head>
+<body>
+        <h1>Consulta de CCID</h1>
+        <input type="text" id="ccid" placeholder="Insira o CCID aqui">
+        <button onclick="getOperator()">Obter Operadora</button>
+        <p id="result"></p>
+
+        <script>
+            // Função para obter a operadora quando a página é carregada
+            window.onload = function() {
+                var ccid = window.location.hash.substring(1); // Remover o '#'
+                if (ccid) {
+                    document.getElementById('ccid').value = ccid;
+                    getOperator();
+                }
+            };
+        </script>
+
+        <script>
+                // Carregar o JSON
+                var data = {
+                                "Brazil": "BR",
+                                "operators": [
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "00",
+                                    "Brand": "Nextel",
+                                    "Operator": "NII Holdings, Inc.",
+                                    "Status": "Not Operational",
+                                    "Bands (MHz)": "iDEN 850",
+                                    "References and notes": "Defunct since March 2018[11]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "01",
+                                    "Brand": "",
+                                    "Operator": "SISTEER DO BRASIL TELECOMUNICAÇÔES",
+                                    "Status": "Not Operational",
+                                    "Bands (MHz)": "MVNO",
+                                    "References and notes": "Through Vivo S.A. network[6]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "02",
+                                    "Brand": "TIM",
+                                    "Operator": "Telecom Italia Mobile",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "GSM 900 / GSM 1800 / UMTS 850 / UMTS 900 / UMTS 2100 / LTE 700 / LTE 1800 / LTE 2100 / LTE 2600 / 5G 700 / 5G 1800 / 5G 2300 / 5G 2600 / 5G 3500",
+                                    "References and notes": "[5][3]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "03",
+                                    "Brand": "TIM",
+                                    "Operator": "Telecom Italia Mobile",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "GSM 900 / GSM 1800 / UMTS 850 / UMTS 900 / UMTS 2100 / LTE 700 / LTE 1800 / LTE 2100 / LTE 2600 / 5G 700 / 5G 1800 / 5G 2300 / 5G 2600 / 5G 3500",
+                                    "References and notes": "[5][3]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "04",
+                                    "Brand": "TIM",
+                                    "Operator": "Telecom Italia Mobile",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "GSM 900 / GSM 1800 / UMTS 850 / UMTS 900 / UMTS 2100 / LTE 700 / LTE 1800 / LTE 2100 / LTE 2600 / 5G 700 / 5G 1800 / 5G 2300 / 5G 2600 / 5G 3500",
+                                    "References and notes": "[5][3]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "05",
+                                    "Brand": "Claro",
+                                    "Operator": "Claro",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "GSM 900 / GSM 1800 / UMTS 850 / UMTS 2100 / LTE 700 / LTE 1800 / LTE 2600 / 5G 2300 / 5G 2600 / 5G 3500",
+                                    "References and notes": "[5]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "06",
+                                    "Brand": "Vivo",
+                                    "Operator": "Telefônica Brasil S.A.",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "GSM 850 / GSM 1800 / UMTS 850 / UMTS 2100 / LTE 700 / LTE 1800 / LTE 2600 / 5G 700 / 5G 1800 / 5G 2300 / 5G 2600 / 5G 3500",
+                                    "References and notes": "[12]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "10",
+                                    "Brand": "Vivo",
+                                    "Operator": "Telefônica Brasil S.A.",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "GSM 850 / GSM 1800 / UMTS 850 / UMTS 2100 / LTE 700 / LTE 1800 / LTE 2600 / 5G 700 / 5G 1800 / 5G 2300 / 5G 2600 / 5G 3500",
+                                    "References and notes": "[12]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "11",
+                                    "Brand": "Vivo",
+                                    "Operator": "Telefônica Brasil S.A.",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "GSM 850 / GSM 1800 / UMTS 850 / UMTS 2100 / LTE 700 / LTE 1800 / LTE 2600 / 5G 700 / 5G 1800 / 5G 2300 / 5G 2600 / 5G 3500",
+                                    "References and notes": "[12]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "12",
+                                    "Brand": "Claro",
+                                    "Operator": "Claro",
+                                    "Status": "Unknown",
+                                    "Bands (MHz)": "Unknown",
+                                    "References and notes": "Unknown"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "13",
+                                    "Brand": "NLT",
+                                    "Operator": "NLT Telecom",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "MVNO"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "15",
+                                    "Brand": "Sercomtel",
+                                    "Operator": "Sercomtel Celular",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "GSM 900 / GSM 1800 / UMTS 850",
+                                    "References and notes": "[6]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "16",
+                                    "Brand": "Brasil Telecom GSM",
+                                    "Operator": "Brasil Telecom GSM",
+                                    "Status": "Not operational",
+                                    "Bands (MHz)": "GSM 1800 / UMTS 2100",
+                                    "References and notes": "Acquired by Oi, MNC used for existing Brasil Telecom SIM Cards only"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "17",
+                                    "Brand": "Surf Telecom",
+                                    "Operator": "Correios Celular[pt]",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "MVNO",
+                                    "References and notes": "Through TIM network[13]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "18",
+                                    "Brand": "datora",
+                                    "Operator": "Datora (Vodafone)",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "MVNO",
+                                    "References and notes": "Through TIM network[6]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "21",
+                                    "Brand": "LIGUE",
+                                    "Operator": "Ligue Telecom",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "LTE 2600",
+                                    "References and notes": "[14]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "23",
+                                    "Brand": "Vivo",
+                                    "Operator": "Telefônica Brasil S.A.",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "GSM 850 / GSM 1800 / UMTS 850 / UMTS 2100 / LTE 1800 / LTE 2600",
+                                    "References and notes": "Formerly used by the acquired Telemig Celular[12]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "24",
+                                    "Brand": "",
+                                    "Operator": "Amazonia Celular",
+                                    "Status": "Unknown",
+                                    "Bands (MHz)": "Unknown",
+                                    "References and notes": "Acquired by Oi[6]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "28",
+                                    "Brand": "No name",
+                                    "Operator": "",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "Unknown",
+                                    "References and notes": "Used for RanSharing control and roaming between Vivo and Claro[15]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "29",
+                                    "Brand": "Unifique",
+                                    "Operator": "Unifique Telecomunicações S/A",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "5G 3500"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "30",
+                                    "Brand": "Oi",
+                                    "Operator": "TNL PCS Oi",
+                                    "Status": "Not operational",
+                                    "Bands (MHz)": "Unknown",
+                                    "References and notes": "Liquidated Apr 2022[16]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "31",
+                                    "Brand": "Oi",
+                                    "Operator": "TNL PCS Oi",
+                                    "Status": "Not operational",
+                                    "Bands (MHz)": "GSM 1800 / UMTS 2100 / LTE 1800 / LTE 2100 / LTE 2600 / 5G 2100",
+                                    "References and notes": "Liquidated Apr 2022[16]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "32",
+                                    "Brand": "Algar Telecom",
+                                    "Operator": "Algar Telecom S.A.",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "GSM 900 / GSM 1800 / UMTS 2100 / LTE 700 / LTE 1800 / LTE 2300 / 5G 2300",
+                                    "References and notes": "LTE bands 28 / 3 / 40[3]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "33",
+                                    "Brand": "Algar Telecom",
+                                    "Operator": "Algar Telecom S.A.",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "GSM 900 / GSM 1800 / UMTS 2100 / LTE 700 / LTE 1800 / LTE 2300 / 5G 2300",
+                                    "References and notes": "[3]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "34",
+                                    "Brand": "Algar Telecom",
+                                    "Operator": "Algar Telecom S.A.",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "GSM 900 / GSM 1800 / UMTS 2100 / LTE 700 / LTE 1800 / LTE 2300 / 5G 2300",
+                                    "References and notes": "[3]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "35",
+                                    "Brand": "",
+                                    "Operator": "Telcom Telecomunicações",
+                                    "Status": "Unknown",
+                                    "Bands (MHz)": "Unknown",
+                                    "References and notes": "[6]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "36",
+                                    "Brand": "",
+                                    "Operator": "Options Telecomunicações",
+                                    "Status": "Not Operational",
+                                    "Bands (MHz)": "MVNO",
+                                    "References and notes": "[6]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "37",
+                                    "Brand": "aeiou",
+                                    "Operator": "Unicel",
+                                    "Status": "Not operational",
+                                    "Bands (MHz)": "Unknown",
+                                    "References and notes": "Bankruptcy in 2011[6]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "38",
+                                    "Brand": "Claro",
+                                    "Operator": "Claro",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "GSM 1900",
+                                    "References and notes": "Inherited from the old Vesper's WLL licenses. In use for fixed wireless phones."
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "39",
+                                    "Brand": "Nextel",
+                                    "Operator": "NII Holdings, Inc.",
+                                    "Status": "Not Operational",
+                                    "Bands (MHz)": "UMTS 2100 / LTE 1800 / LTE 2100",
+                                    "References and notes": "Merged with Claro in 2020 [5]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "40",
+                                    "Brand": "Telecall",
+                                    "Operator": "Telexperts Telecomunicações S.A",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "MVNO",
+                                    "References and notes": "[citation needed]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "54",
+                                    "Brand": "Conecta",
+                                    "Operator": "PORTO SEGURO TELECOMUNICAÇÔES",
+                                    "Status": "Not Operational",
+                                    "Bands (MHz)": "MVNO",
+                                    "References and notes": "Defunct since 2018, clients were transferred to TIM.[6][17]"
+                                    },
+                                    {
+                                    "MCC": "724",
+                                    "MNC": "99",
+                                    "Brand": "Local",
+                                    "Operator": "",
+                                    "Status": "Operational",
+                                    "Bands (MHz)": "Unknown",
+                                    "References and notes": "Used for RanSharing control and roaming between TIM and Oi[6]"
+                                    }
+                                ]
+                            };
+
+                // Função para analisar o CCID
+                function analyzeCCID(ccid) {
+                    // Extrair o MNC do CCID
+                    var mnc = ccid.substring(4, 6);
+
+                    // Procurar a operadora correspondente
+                    for (var i = 0; i < data.operators.length; i++) {
+                        if (data.operators[i].MNC === mnc) {
+                            return data.operators[i];
+                        }
+                    }
+
+                    // Se nenhuma operadora correspondente for encontrada, retorne null
+                    return null;
+                }
+
+                // Função para obter a operadora quando o botão é clicado
+                function getOperator() {
+                    var ccid = document.getElementById('ccid').value;
+                    var operator = analyzeCCID(ccid);
+                    var result = document.getElementById('result');
+
+                    if (operator) {
+                        var operatorInfo = 
+                            "MCC: " + operator.MCC + "<br>" +
+                            "MNC: " + operator.MNC + "<br>" +
+                            "Brand: " + operator.Brand + "<br>" +
+                            "Operator: " + operator.Operator + "<br>" +
+                            "Status: " + operator.Status + "<br>" +
+                            "Bands (MHz): " + operator["Bands (MHz)"] + "<br>" +
+                            "References and notes: " + operator["References and notes"];
+                        result.innerHTML = operatorInfo;
+                    } else {
+                        result.textContent = "Nenhuma operadora encontrada para o CCID fornecido.";
+                    }
+                }
+        </script>
+</body>
+</html>
