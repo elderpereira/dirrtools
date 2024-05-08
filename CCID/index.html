@@ -349,13 +349,14 @@
 
                     if (operator) {
                         var operatorInfo = 
+                        //ccid
+                            "CCID: " + ccid + "<br>" +
                             "MCC: " + operator.MCC + "<br>" +
                             "MNC: " + operator.MNC + "<br>" +
                             "Brand: " + operator.Brand + "<br>" +
-                            "Operator: " + operator.Operator + "<br>" +
+                            "Operadora: " + operator.Operator + "<br>" +
                             "Status: " + operator.Status + "<br>" +
-                            "Bands (MHz): " + operator["Bands (MHz)"] + "<br>" +
-                            "References and notes: " + operator["References and notes"];
+                            "Bandas de frequência LTE (MHz): " + operator["Bands (MHz)"] + "<br>";
                         result.innerHTML = operatorInfo;
                     } else {
                         result.textContent = "Nenhuma operadora encontrada para o CCID fornecido.";
